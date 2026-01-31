@@ -121,23 +121,30 @@ These connect Loa and Runtime.
 
 ### For Loa Repo (0xHoneyJar/loa)
 
-**PR 1: Adversarial Critic Phase**
-- Add optional `critic` phase to construct.yaml
-- Critic prompt explicitly challenges outputs
-- Gate: critic must identify ≥1 issue OR explicitly approve
+**PR 1: Adversarial Critic Protocol** ✅ DRAFTED
+- Branch: `feat/adversarial-critic-protocol`
+- Fork: https://github.com/janitooor/legba/pull/new/feat/adversarial-critic-protocol
+- Changes:
+  - Add `<adversarial_protocol>` section to reviewing-code SKILL.md
+  - Require minimum 3 concerns, 1 assumption challenge, 1 alternative
+  - Add adversarial analysis section to review-feedback.md template
 
-**PR 2: Decision Lineage Schema**
-- Add `grimoires/loa/decisions.yaml` template
-- Structure: `{ decision_id, phase, summary, rationale, alternatives_considered }`
-- Auto-populate during phase execution
+**PR 2: Decision Lineage Schema** ✅ DRAFTED
+- Branch: `feat/decision-lineage-schema`
+- Fork: https://github.com/janitooor/legba/pull/new/feat/decision-lineage-schema
+- Changes:
+  - Add `.claude/schemas/decisions.schema.json`
+  - Add `.claude/protocols/decision-capture.md`
+  - Add `docs/architecture/decision-lineage.md`
+  - Add `grimoires/loa/decisions.yaml` template
 
-### For Runtime Repo (if applicable)
+### For Runtime Repo (Clawdbot) — Future
 
-**PR 3: Context Hygiene Mode**
+**PR 3: Context Hygiene Mode** (not yet drafted)
 - Add `contextHygiene: { summarize: true, maxRawBytes: 1000 }` to exec/tool config
 - Summarize large outputs before context injection
 
-**PR 4: Checkpoint Schema**
+**PR 4: Checkpoint Schema** (not yet drafted)
 - Define shared checkpoint format for sub-agents
 - Enable resume from checkpoint on failure
 
