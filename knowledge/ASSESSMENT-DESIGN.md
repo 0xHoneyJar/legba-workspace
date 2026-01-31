@@ -124,52 +124,54 @@ AFTER EXECUTION
 
 ### 3.1 Standard Exit Codes
 
-Following Unix convention and BSD sysexits.h, we define skill exit codes:
+Following BSD sysexits.h (noting it is **officially deprecated** but remains the closest standard):
 
 ```yaml
-# Standard exit codes for Loa skills
+# Exit codes for Loa skills
+# Based on sysexits.h with Loa-specific mappings
+
 exit_codes:
   # Success
-  0:   success           # Skill completed successfully
+  0:   EX_OK             # Skill completed successfully
   
-  # General failures (1-63)
-  1:   general_failure   # Unspecified error
-  2:   misuse            # Invalid arguments or invocation
+  # Application-specific (1-63) - convention, not standard
+  1:   general_failure   # Unspecified error (retriable)
+  2:   blocked           # Needs human intervention (escalate)
   3:   incomplete        # Skill ran but didn't finish all work
   4:   partial           # Some objectives achieved, others failed
   
-  # Precondition failures (64-79)
-  64:  usage_error       # Command line usage error
-  65:  data_error        # Input data was incorrect
-  66:  no_input          # Required input file missing
-  67:  no_user           # Addressee unknown
-  68:  no_host           # Host name unknown
-  69:  unavailable       # Service unavailable
-  70:  internal_error    # Internal software error
-  71:  os_error          # System error (can't fork, etc.)
-  72:  os_file           # Critical OS file missing
-  73:  cant_create       # Can't create output file
-  74:  io_error          # I/O error
-  75:  temp_fail         # Temporary failure; retry later
-  76:  protocol          # Remote protocol error
-  77:  no_permission     # Permission denied
-  78:  config_error      # Configuration error
+  # BSD sysexits.h (64-78) - actual standard codes
+  64:  EX_USAGE          # Command line usage error
+  65:  EX_DATAERR        # Input data was incorrect
+  66:  EX_NOINPUT        # Required input file missing/unreadable
+  67:  EX_NOUSER         # User specified did not exist (rarely used)
+  68:  EX_NOHOST         # Host specified did not exist (rarely used)
+  69:  EX_UNAVAILABLE    # Service unavailable (catchall)
+  70:  EX_SOFTWARE       # Internal software error
+  71:  EX_OSERR          # OS error (can't fork, pipe, etc.)
+  72:  EX_OSFILE         # System file error (rarely used)
+  73:  EX_CANTCREAT      # Can't create output file
+  74:  EX_IOERR          # I/O error on file
+  75:  EX_TEMPFAIL       # Temporary failure; retry later
+  76:  EX_PROTOCOL       # Protocol exchange error (rarely used)
+  77:  EX_NOPERM         # Permission denied (higher-level, not file)
+  78:  EX_CONFIG         # Configuration error
   
-  # Skill-specific (80-99)
-  80:  blocked           # Skill blocked by dependency
-  81:  timeout           # Skill exceeded time limit
-  82:  quota_exceeded    # Resource quota exhausted
-  83:  escalation        # Skill needs human intervention
-  84:  validation_failed # Output failed schema validation
+  # Loa extensions (79-99) - NOT standard, use sparingly
+  # Note: These are Loa-specific and not portable
+  79:  timeout           # Skill exceeded time limit
+  # 80-99: Reserved for future Loa-specific codes
   
   # Reserved (100-125)
-  # 100-125: Reserved for framework use
+  # 100-125: Avoid - no convention
   
-  # Special (126-127, 128+)
-  126: not_executable    # Skill exists but isn't executable
-  127: not_found         # Skill not found
-  # 128+N: Skill terminated by signal N
+  # Shell conventions (126-127, 128+)
+  126: not_executable    # Command found but not executable
+  127: not_found         # Command not found
+  # 128+N: Terminated by signal N (SIGTERM=143, SIGKILL=137)
 ```
+
+**Important**: Codes 67, 68, 71, 72, 76 are rarely applicable to skill execution. Prefer EX_UNAVAILABLE (69) as a catchall when unsure.
 
 ### 3.2 Exit Code Design Principles
 

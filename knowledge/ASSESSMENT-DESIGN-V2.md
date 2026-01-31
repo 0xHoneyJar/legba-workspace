@@ -44,6 +44,8 @@ interface SkillResult {
 
 ## Exit Codes
 
+### V2 Minimal (What We Ship)
+
 | Code | Status | Meaning | Orchestrator Action |
 |------|--------|---------|---------------------|
 | 0 | success | Phase completed | Proceed to next phase |
@@ -56,6 +58,34 @@ Why these three?
 - Every decision the orchestrator makes maps to one of: proceed / retry / escalate
 - More granular codes add complexity without changing decisions
 - If we need more later, we'll add them when a real consumer needs them
+
+### BSD sysexits.h Reference (If We Need More)
+
+Note: sysexits.h is **officially deprecated** per FreeBSD docs, but remains the closest thing to a standard.
+
+| Code | Constant | Meaning | Loa Mapping |
+|------|----------|---------|-------------|
+| 0 | EX_OK | Success | ✅ Use as-is |
+| 64 | EX_USAGE | Bad command usage | Invalid skill invocation |
+| 65 | EX_DATAERR | Input data incorrect | Bad inputs to skill |
+| 66 | EX_NOINPUT | Input file missing | Precondition failed (handoff artifact missing) |
+| 69 | EX_UNAVAILABLE | Service unavailable | External dependency down |
+| 70 | EX_SOFTWARE | Internal software error | Skill bug |
+| 73 | EX_CANTCREAT | Can't create output | Artifact write failed |
+| 74 | EX_IOERR | I/O error | File system issue |
+| 75 | EX_TEMPFAIL | Temporary failure | Retry later (network, rate limit) |
+| 77 | EX_NOPERM | Permission denied | Auth/access issue |
+| 78 | EX_CONFIG | Misconfigured | Bad skill config |
+
+**Codes 67, 68, 71, 72, 76** (NOUSER, NOHOST, OSERR, OSFILE, PROTOCOL) are less relevant for skill execution.
+
+**Codes 1-63**: Reserved by convention for application-specific use. We use:
+- 1 = general failure
+- 2 = blocked/escalate
+
+**Codes 126-127**: Shell convention (126 = found but not executable, 127 = not found)
+
+**Codes 128+N**: Terminated by signal N (e.g., 137 = SIGKILL, 143 = SIGTERM)
 
 ---
 
